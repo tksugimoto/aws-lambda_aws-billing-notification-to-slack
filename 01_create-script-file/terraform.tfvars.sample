@@ -1,0 +1,7 @@
+# Rename: terraform.tfvars.sample → terraform.tfvars
+
+# 請求レポートを保存しているバケット名
+# bucket = "aws-billing-xxxxxxxxx"
+
+# Slack WebhookのURL
+# slack_webhook_url = "https://hooks.slack.com/services/*********/*********/************************"
