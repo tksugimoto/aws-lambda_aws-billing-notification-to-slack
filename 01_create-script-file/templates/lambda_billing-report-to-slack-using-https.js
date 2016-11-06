@@ -49,7 +49,7 @@ function getLatestBillingCsvKey(accountId) {
 			const month = today.getMonth();
 			// 去年の前月から取得する
 			//   ※ month: 1月 == 0
-			//   ※ 同じ年にすると1月になったばかりはレポートが作成されてb無い場合がある（？）
+			//   ※ 同じ年にすると1月になったばかりはレポートが作成されて無い場合がある（？）
 			params.StartAfter = `${accountId}-aws-billing-csv-${year - 1}-${month}`;
 		}
 		const startTime = Date.now();
