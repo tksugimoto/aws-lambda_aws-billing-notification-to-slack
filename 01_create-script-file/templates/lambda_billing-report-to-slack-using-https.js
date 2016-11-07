@@ -116,7 +116,9 @@ function getBillingData(billingCsvKey) {
 					}).join(", ");
 				}).join("\n");
 
-				resolve(text);
+				const lastModified = new Date(data.LastModified);
+				const lastModifiedText = `lastModified: ${lastModified.toLocaleString()}`;
+				resolve(lastModifiedText + "\n" + text);
 			}
 		});
 	});
