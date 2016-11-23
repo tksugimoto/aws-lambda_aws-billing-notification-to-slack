@@ -4,8 +4,9 @@ const AWS = require("aws-sdk");
 /**** 設定ここから ****/
 const bucket = "%bucket%";
 const slack_webhook_url = "%slack_webhook_url%"
-const username = "aws-billing";
-const icon_emoji = ":dollar:";
+const channel = "%channel%"
+const username = "%username%";
+const icon_emoji = "%icon_emoji%";
 /**** 設定ここまで ****/
 
 const sts = new AWS.STS();
@@ -142,6 +143,7 @@ function postToSlack(text) {
 		});
 
 		const body = JSON.stringify({
+			channel: channel,
 			username: username,
 			icon_emoji: icon_emoji,
 			text: text
