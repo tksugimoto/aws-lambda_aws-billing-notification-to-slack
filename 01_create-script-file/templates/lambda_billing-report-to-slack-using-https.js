@@ -136,7 +136,9 @@ function postToSlack(text) {
 		};
 		const req = https.request(options, res => {
 			res.on("data", chunk => {
-				console.log("[OK] " + chunk.toString());
+				const statusCode = res.statusCode;
+				const result = statusCode === 200 ? "OK" : `NG(${statusCode})`;
+				console.log(`[${result}] ${chunk.toString()}`);
 			}).on('error', e => {
 				console.log("ERROR:" + e.stack);
 			});
