@@ -13,7 +13,11 @@ AWS Lambda(Node.js)でAWSの利用金額をSlackに投げる（構成をTerrafor
 			* S3 バケットのプロパティ→アクセス許可→バケットポリシーの編集に貼付け
 		1. 「検証」→「有効なバケット」となればOK
 1. lamnda関数を作成
-	1. `cp terraform.tfvars.sample terraform.tfvars`
+	1. 設定用ファイルを作成  
+		`terraform.tfvars.sample` ファイルを `terraform.tfvars` という名前でコピー
+		```
+		cp terraform.tfvars.sample terraform.tfvars
+		```
 	1. `terraform.tfvars` に設定を書き込む
 		* `aws_access_key`
 		* `aws_secret_key`
@@ -23,4 +27,7 @@ AWS Lambda(Node.js)でAWSの利用金額をSlackに投げる（構成をTerrafor
 		* [任意] `channel` (投稿先チャンネル名)
 		* [任意] `username` (投稿表示名)
 		* [任意] `icon_emoji` (アイコン)
-	1. `terraform apply`
+	1. デプロイ
+		```
+		terraform apply
+		```
