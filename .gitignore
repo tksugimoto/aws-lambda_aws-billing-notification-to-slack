@@ -6,5 +6,4 @@
 *.tfstate
 *.tfstate.backup
 
-/02_zip-index.js/index.js
 /02_zip-index.js/index.zip

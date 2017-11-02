@@ -8,6 +8,15 @@ resource "aws_lambda_function" "notification" {
 	timeout = 10
 	filename = "../02_zip-index.js/index.zip"
 	source_code_hash = "${base64sha256(file("../02_zip-index.js/index.zip"))}"
+    environment {
+        variables = {
+            bucket            = "${var.bucket}"
+            slack_webhook_url = "${var.slack_webhook_url}"
+            channel           = "${var.channel}"
+            username          = "${var.username}"
+            icon_emoji        = "${var.icon_emoji}"
+        }
+    }
 }
 
 # sleep入れないとなぜかエラーになるため（おまじない）
