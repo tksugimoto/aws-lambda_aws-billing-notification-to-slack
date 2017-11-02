@@ -1,3 +1,8 @@
+data "archive_file" "source_code" {
+  type        = "zip"
+  source_file = "../02_zip-index.js/index.js"
+  output_path = "../02_zip-index.js/index.zip"
+}
 
 resource "aws_lambda_function" "notification" {
 	depends_on = ["null_resource.wait_ready_role"]
@@ -7,7 +12,7 @@ resource "aws_lambda_function" "notification" {
 	handler = "index.handler"
 	timeout = 10
 	filename = "../02_zip-index.js/index.zip"
-	source_code_hash = "${base64sha256(file("../02_zip-index.js/index.zip"))}"
+	source_code_hash = "${data.archive_file.source_code.output_base64sha256}"
     environment {
         variables = {
             bucket            = "${var.bucket}"
