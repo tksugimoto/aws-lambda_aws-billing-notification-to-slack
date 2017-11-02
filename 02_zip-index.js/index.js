@@ -2,11 +2,11 @@ const https = require("https");
 const AWS = require("aws-sdk");
 
 /**** 設定ここから ****/
-const bucket = "%bucket%";
-const slack_webhook_url = "%slack_webhook_url%"
-const channel = "%channel%"
-const username = "%username%";
-const icon_emoji = "%icon_emoji%";
+const bucket = process.env.bucket;
+const slack_webhook_url = process.env.slack_webhook_url;
+const channel = process.env.channel || "";
+const username = process.env.username || "";
+const icon_emoji = process.env.icon_emoji || "";
 /**** 設定ここまで ****/
 
 const sts = new AWS.STS();
