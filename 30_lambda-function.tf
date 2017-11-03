@@ -1,7 +1,7 @@
 data "archive_file" "source_code" {
   type        = "zip"
-  source_file = "../02_zip-index.js/index.js"
-  output_path = "../02_zip-index.js/index.zip"
+  source_file = "./src/index.js"
+  output_path = "./dist/index.zip"
 }
 
 resource "aws_lambda_function" "notification" {
@@ -11,7 +11,7 @@ resource "aws_lambda_function" "notification" {
 	runtime = "nodejs4.3"
 	handler = "index.handler"
 	timeout = 10
-	filename = "../02_zip-index.js/index.zip"
+	filename = "./dist/index.zip"
 	source_code_hash = "${data.archive_file.source_code.output_base64sha256}"
     environment {
         variables = {

@@ -1,9 +1,8 @@
 .*
 !.gitignore
-!.gitkeep
 
 *.tfvars
 *.tfstate
 *.tfstate.backup
 
-/02_zip-index.js/index.zip
+/dist/
