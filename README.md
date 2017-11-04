@@ -15,9 +15,9 @@ AWS Lambda(Node.js)でAWSの利用金額をSlackに投げる（構成をTerrafor
 1. lamnda関数を作成
 	1. `cp terraform.tfvars.sample terraform.tfvars`
 	1. `terraform.tfvars` に設定を書き込む
-		* aws_access_key
-		* aws_secret_key
-		* region (lambda関数を置く)
+		* `aws_access_key`
+		* `aws_secret_key`
+		* `region` (lambda関数を置く)
 		* `bucket` (請求レポートを保存する設定をしたS3 バケット名)
 		* `slack_webhook_url`
 		* [任意] `channel` (投稿先チャンネル名)
