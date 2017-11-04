@@ -1,10 +1,10 @@
 # aws-lambda_aws-billing-notification-to-slack
-AWS Lambda(Node.js)でAWSの利用金額をSlackに投げる（構成をTerraformで作る）
+AWS Lambda(Node.js)でAWSの利用金額をSlackに投げる（構成を [Terraform](https://www.terraform.io/ "https://www.terraform.io/") で作る）
 
 ## 使い方
 1. 事前準備
 	* Local
-		* terraform をインストール
+		* [Terraform](https://www.terraform.io/ "https://www.terraform.io/") をインストール
 	* AWS（請求レポートの設定）
 		1. [S3 Management Console](https://console.aws.amazon.com/s3/home "https://console.aws.amazon.com/s3/home") で請求レポート用のS3 バケットを作成
 		1. [Billing Management Console](https://console.aws.amazon.com/billing/home?#/preferences "https://console.aws.amazon.com/billing/home?#/preferences") の「請求レポートを受け取る」をONにして作成したS3 バケット名を入力
