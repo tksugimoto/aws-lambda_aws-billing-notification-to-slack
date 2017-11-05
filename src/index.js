@@ -6,10 +6,10 @@ const AWS = require('aws-sdk');
 
 /**** 設定ここから ****/
 const bucket = process.env.bucket;
-const slack_webhook_url = process.env.slack_webhook_url;
+const slackWebhookUrl = process.env.slack_webhook_url;
 const channel = process.env.channel || '';
 const username = process.env.username || '';
-const icon_emoji = process.env.icon_emoji || '';
+const iconEmoji = process.env.icon_emoji || '';
 /**** 設定ここまで ****/
 
 const sts = new AWS.STS();
@@ -129,13 +129,13 @@ function getBillingData(billingCsvKey) {
 }
 
 function postToSlack(text) {
-	const options = parseUrl(slack_webhook_url);
+	const options = parseUrl(slackWebhookUrl);
 	options.method = 'POST';
 
 	const body = JSON.stringify({
 		channel,
 		username,
-		icon_emoji,
+		icon_emoji: iconEmoji,
 		text,
 	});
 
