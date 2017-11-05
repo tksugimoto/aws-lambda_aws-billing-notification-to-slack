@@ -130,8 +130,8 @@ function postToSlack(text) {
 		const host = RegExp.$1;
 		const path = RegExp.$2;
 		const options = {
-			host: host,
-			path: path,
+			host,
+			path,
 			method: "POST"
 		};
 		const req = https.request(options, res => {
@@ -145,10 +145,10 @@ function postToSlack(text) {
 		});
 
 		const body = JSON.stringify({
-			channel: channel,
-			username: username,
-			icon_emoji: icon_emoji,
-			text: text
+			channel,
+			username,
+			icon_emoji,
+			text
 		});
 
 		req.write(body);
