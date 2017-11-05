@@ -78,7 +78,7 @@ function getBillingData(billingCsvKey) {
 		console.log("============= getObject =============");
 		const params = {
 			Bucket: bucket,
-			Key: billingCsvKey
+			Key: billingCsvKey,
 		};
 		const startTime = Date.now();
 		s3.getObject(params, (err, data) => {
@@ -101,11 +101,11 @@ function getBillingData(billingCsvKey) {
 				const ColIndex = [
 					0,	// Row name
 					-3,	// InvoiceTotal
-					-2	// StatementTotal
+					-2,	// StatementTotal
 				];
 				const RowIndex = [
 					3, // RecordType
-					28 // TotalCost
+					28, // TotalCost
 				];
 				const text = matrix.filter((_, index, matrix) => {
 					return ColIndex.some(i => {
@@ -132,7 +132,7 @@ function postToSlack(text) {
 		const options = {
 			host,
 			path,
-			method: "POST"
+			method: "POST",
 		};
 		const req = https.request(options, res => {
 			res.on("data", chunk => {
@@ -148,7 +148,7 @@ function postToSlack(text) {
 			channel,
 			username,
 			icon_emoji,
-			text
+			text,
 		});
 
 		req.write(body);
