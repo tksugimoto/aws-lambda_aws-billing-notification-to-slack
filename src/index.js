@@ -105,15 +105,14 @@ function getBillingData(billingCsvKey) {
 					0,	// Row name
 					-3,	// InvoiceTotal
 					-2,	// StatementTotal
-				];
+				].map(n => n < 0 ? n + matrix.length : n);
+
 				const RowIndex = [
 					3, // RecordType
 					28, // TotalCost
 				];
-				const text = matrix.filter((_, index, matrix) => {
-					return ColIndex.some(i => {
-						return (index - i) % matrix.length === 0;
-					});
+				const text = matrix.filter((_, index) => {
+					return ColIndex.includes(index);
 				}).map(row => {
 					return RowIndex.map(i => {
 						return row[i];
