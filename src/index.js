@@ -1,12 +1,15 @@
-const https = require("https");
-const AWS = require("aws-sdk");
+const {
+    parse: parseUrl,
+} = require('url');
+const https = require('https');
+const AWS = require('aws-sdk');
 
 /**** 設定ここから ****/
 const bucket = process.env.bucket;
-const slack_webhook_url = process.env.slack_webhook_url;
-const channel = process.env.channel || "";
-const username = process.env.username || "";
-const icon_emoji = process.env.icon_emoji || "";
+const slackWebhookUrl = process.env.slack_webhook_url;
+const channel = process.env.channel || '';
+const username = process.env.username || '';
+const iconEmoji = process.env.icon_emoji || '';
 /**** 設定ここまで ****/
 
 const sts = new AWS.STS();
@@ -22,7 +25,7 @@ exports.handler = () => {
 
 function getAccountId() {
 	return new Promise(resolve => {
-		console.log("============= getCallerIdentity =============");
+		console.log('============= getCallerIdentity =============');
 		const startTime = Date.now();
 		sts.getCallerIdentity((err, data) => {
 			console.log(Date.now() - startTime);
@@ -30,7 +33,7 @@ function getAccountId() {
 				console.log(err, err.stack);
 			} else {
 				const accountId = data.Account;
-				console.log(JSON.stringify(data, "", "    "));
+				console.log(JSON.stringify(data, '', '    '));
 				resolve(accountId);
 			}
 		});
@@ -39,7 +42,7 @@ function getAccountId() {
 
 function getLatestBillingCsvKey(accountId) {
 	return new Promise(resolve => {
-		console.log("============= listObjectsV2 =============");
+		console.log('============= listObjectsV2 =============');
 		const params = {
 			Bucket: bucket,
 		};
@@ -58,12 +61,12 @@ function getLatestBillingCsvKey(accountId) {
 			console.log(Date.now() - startTime);
 			if (err) {
 				console.log(`[${err.code}] ${err.message}`);
-				console.log(JSON.stringify(err, "", "    "));
+				console.log(JSON.stringify(err, '', '    '));
 				// console.log(err, err.stack);
 			} else {
 				console.log(`KeyCount: ${data.KeyCount}`);
 				data.Contents.filter(content => {
-					return content.Key.includes("-aws-billing-csv-");
+					return content.Key.includes('-aws-billing-csv-');
 				}).slice(-1).forEach(content => {
 					console.log(content);
 					resolve(content.Key);
@@ -75,84 +78,74 @@ function getLatestBillingCsvKey(accountId) {
 
 function getBillingData(billingCsvKey) {
 	return new Promise(resolve => {
-		console.log("============= getObject =============");
+		console.log('============= getObject =============');
 		const params = {
 			Bucket: bucket,
-			Key: billingCsvKey
+			Key: billingCsvKey,
 		};
 		const startTime = Date.now();
 		s3.getObject(params, (err, data) => {
 			console.log(Date.now() - startTime);
 			if (err) {
 				console.log(`[${err.code}] ${err.message}`);
-				console.log(JSON.stringify(err, "", "    "));
+				console.log(JSON.stringify(err, '', '    '));
 				// console.log(err, err.stack);
 			} else {
 				const csv = data.Body.toString();
 				delete data.Body;
-				console.log(JSON.stringify(data, "", "    "));
-				console.log("============= Body =============");
-				const matrix = csv.split("\n").filter(s => s.length).map(line => {
-					// 最初と最後の「"」を削除
-					// TODO: 「"」のエスケープに対応
+				console.log(JSON.stringify(data, '', '    '));
+				console.log('============= Body =============');
+				const matrix = csv.split('\n').filter(s => s.length).map(line => {
+					// 最初と最後の「'」を削除
+					// TODO: 「'」のエスケープに対応
 					return line.slice(1, -1).split('","');
 				});
 
 				const ColIndex = [
 					0,	// Row name
 					-3,	// InvoiceTotal
-					-2	// StatementTotal
-				];
+					-2,	// StatementTotal
+				].map(n => n < 0 ? n + matrix.length : n);
+
 				const RowIndex = [
 					3, // RecordType
-					28 // TotalCost
+					28, // TotalCost
 				];
-				const text = matrix.filter((_, index, matrix) => {
-					return ColIndex.some(i => {
-						return (index - i) % matrix.length === 0;
-					});
+				const text = matrix.filter((_, index) => {
+					return ColIndex.includes(index);
 				}).map(row => {
 					return RowIndex.map(i => {
 						return row[i];
-					}).join(", ");
-				}).join("\n");
+					}).join(', ');
+				}).join('\n');
 
 				const lastModified = new Date(data.LastModified);
 				const lastModifiedText = `lastModified: ${lastModified.toLocaleString()}`;
-				resolve(lastModifiedText + "\n" + text);
+				resolve(lastModifiedText + '\n' + text);
 			}
 		});
 	});
 }
 
 function postToSlack(text) {
-	if (slack_webhook_url.match(/^https:[/][/]([^/]+)(.*)$/)) {
-		const host = RegExp.$1;
-		const path = RegExp.$2;
-		const options = {
-			host: host,
-			path: path,
-			method: "POST"
-		};
-		const req = https.request(options, res => {
-			res.on("data", chunk => {
-				const statusCode = res.statusCode;
-				const result = statusCode === 200 ? "OK" : `NG(${statusCode})`;
-				console.log(`[${result}] ${chunk.toString()}`);
-			}).on('error', e => {
-				console.log("ERROR:" + e.stack);
-			});
+	const options = parseUrl(slackWebhookUrl);
+	options.method = 'POST';
+
+	const body = JSON.stringify({
+		channel,
+		username,
+		icon_emoji: iconEmoji,
+		text,
+	});
+
+	https.request(options, res => {
+		res.on('data', chunk => {
+			const statusCode = res.statusCode;
+			const result = statusCode === 200 ? 'OK' : `NG(${statusCode})`;
+			console.log(`[${result}] ${chunk.toString()}`);
+		}).on('error', e => {
+			console.log('ERROR:' + e.stack);
 		});
-
-		const body = JSON.stringify({
-			channel: channel,
-			username: username,
-			icon_emoji: icon_emoji,
-			text: text
-		});
-
-		req.write(body);
-
-		req.end();
-	}
+	})
+	.end(body);
 }
