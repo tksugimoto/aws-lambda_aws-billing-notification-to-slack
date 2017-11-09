@@ -35,38 +35,29 @@ function getAccountId() {
 }
 
 function getLatestBillingCsvKey(accountId) {
-	return new Promise(resolve => {
-		console.log('============= listObjectsV2 =============');
-		const params = {
-			Bucket: bucket,
-		};
-		if (accountId) {
-			params.Prefix = `${accountId}-aws-billing-csv-`;
-			const today = new Date();
-			const year = today.getFullYear();
-			const month = today.getMonth();
-			// 去年の前月から取得する
-			//   ※ month: 1月 == 0
-			//   ※ 同じ年にすると1月になったばかりはレポートが作成されて無い場合がある（？）
-			params.StartAfter = `${accountId}-aws-billing-csv-${year - 1}-${month}`;
-		}
-		const startTime = Date.now();
-		s3.listObjectsV2(params, (err, data) => {
-			console.log(Date.now() - startTime);
-			if (err) {
-				console.log(`[${err.code}] ${err.message}`);
-				console.log(JSON.stringify(err, '', '    '));
-				// console.log(err, err.stack);
-			} else {
-				console.log(`KeyCount: ${data.KeyCount}`);
-				data.Contents.filter(content => {
-					return content.Key.includes('-aws-billing-csv-');
-				}).slice(-1).forEach(content => {
-					console.log(content);
-					resolve(content.Key);
-				});
-			}
-		});
+	console.log('============= listObjectsV2 =============');
+	const params = {
+		Bucket: bucket,
+	};
+	if (accountId) {
+		params.Prefix = `${accountId}-aws-billing-csv-`;
+		const today = new Date();
+		const year = today.getFullYear();
+		const month = today.getMonth();
+		// 去年の前月から取得する
+		//   ※ month: 1月 == 0
+		//   ※ 同じ年にすると1月になったばかりはレポートが作成されて無い場合がある（？）
+		params.StartAfter = `${accountId}-aws-billing-csv-${year - 1}-${month}`;
+	}
+	const startTime = Date.now();
+	return s3.listObjectsV2(params).promise().then(data => {
+		console.log(Date.now() - startTime);
+		console.log(`KeyCount: ${data.KeyCount}`);
+		const latestBillingCsv = data.Contents.filter(content => {
+			return content.Key.includes('-aws-billing-csv-');
+		}).slice(-1)[0];
+		console.log(latestBillingCsv);
+		return latestBillingCsv.Key;
 	});
 }
 
