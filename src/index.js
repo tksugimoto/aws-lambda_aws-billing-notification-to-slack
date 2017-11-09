@@ -62,53 +62,45 @@ function getLatestBillingCsvKey(accountId) {
 }
 
 function getBillingData(billingCsvKey) {
-	return new Promise(resolve => {
-		console.log('============= getObject =============');
-		const params = {
-			Bucket: bucket,
-			Key: billingCsvKey,
-		};
-		const startTime = Date.now();
-		s3.getObject(params, (err, data) => {
-			console.log(Date.now() - startTime);
-			if (err) {
-				console.log(`[${err.code}] ${err.message}`);
-				console.log(JSON.stringify(err, '', '    '));
-				// console.log(err, err.stack);
-			} else {
-				const csv = data.Body.toString();
-				delete data.Body;
-				console.log(JSON.stringify(data, '', '    '));
-				console.log('============= Body =============');
-				const matrix = csv.split('\n').filter(s => s.length).map(line => {
-					// 最初と最後の「'」を削除
-					// TODO: 「'」のエスケープに対応
-					return line.slice(1, -1).split('","');
-				});
-
-				const ColIndex = [
-					0,	// Row name
-					-3,	// InvoiceTotal
-					-2,	// StatementTotal
-				].map(n => n < 0 ? n + matrix.length : n);
-
-				const RowIndex = [
-					3, // RecordType
-					28, // TotalCost
-				];
-				const text = matrix.filter((_, index) => {
-					return ColIndex.includes(index);
-				}).map(row => {
-					return RowIndex.map(i => {
-						return row[i];
-					}).join(', ');
-				}).join('\n');
-
-				const lastModified = new Date(data.LastModified);
-				const lastModifiedText = `lastModified: ${lastModified.toLocaleString()}`;
-				resolve(lastModifiedText + '\n' + text);
-			}
+	console.log('============= getObject =============');
+	const params = {
+		Bucket: bucket,
+		Key: billingCsvKey,
+	};
+	const startTime = Date.now();
+	return s3.getObject(params).promise().then(data => {
+		console.log(Date.now() - startTime);
+		const csv = data.Body.toString();
+		delete data.Body;
+		console.log(JSON.stringify(data, '', '    '));
+		console.log('============= Body =============');
+		const matrix = csv.split('\n').filter(s => s.length).map(line => {
+			// 最初と最後の「'」を削除
+			// TODO: 「'」のエスケープに対応
+			return line.slice(1, -1).split('","');
 		});
+
+		const ColIndex = [
+			0,	// Row name
+			-3,	// InvoiceTotal
+			-2,	// StatementTotal
+		].map(n => n < 0 ? n + matrix.length : n);
+
+		const RowIndex = [
+			3, // RecordType
+			28, // TotalCost
+		];
+		const text = matrix.filter((_, index) => {
+			return ColIndex.includes(index);
+		}).map(row => {
+			return RowIndex.map(i => {
+				return row[i];
+			}).join(', ');
+		}).join('\n');
+
+		const lastModified = new Date(data.LastModified);
+		const lastModifiedText = `lastModified: ${lastModified.toLocaleString()}`;
+		return lastModifiedText + '\n' + text;
 	});
 }
 
