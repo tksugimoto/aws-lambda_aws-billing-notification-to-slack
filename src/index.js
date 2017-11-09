@@ -24,19 +24,13 @@ exports.handler = () => {
 };
 
 function getAccountId() {
-	return new Promise(resolve => {
-		console.log('============= getCallerIdentity =============');
-		const startTime = Date.now();
-		sts.getCallerIdentity((err, data) => {
-			console.log(Date.now() - startTime);
-			if (err) {
-				console.log(err, err.stack);
-			} else {
-				const accountId = data.Account;
-				console.log(JSON.stringify(data, '', '    '));
-				resolve(accountId);
-			}
-		});
+	console.log('============= getCallerIdentity =============');
+	const startTime = Date.now();
+	return sts.getCallerIdentity().promise().then(data => {
+		console.log(Date.now() - startTime);
+		const accountId = data.Account;
+		console.log(JSON.stringify(data, '', '    '));
+		return accountId;
 	});
 }
 
