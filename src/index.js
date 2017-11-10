@@ -15,12 +15,13 @@ const iconEmoji = process.env.icon_emoji || '';
 const sts = new AWS.STS();
 const s3 = new AWS.S3();
 
-exports.handler = () => {
+exports.handler = (event, context, callback) => {
 	Promise.resolve()
 	.then(getAccountId)
 	.then(getLatestBillingCsvKey)
 	.then(getBillingData)
-	.then(postToSlack);
+	.then(postToSlack)
+	.catch(callback);
 };
 
 function getAccountId() {
