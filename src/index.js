@@ -115,14 +115,17 @@ function postToSlack(text) {
 		text,
 	});
 
-	https.request(options, res => {
-		res.on('data', chunk => {
-			const statusCode = res.statusCode;
-			const result = statusCode === 200 ? 'OK' : `NG(${statusCode})`;
-			console.log(`[${result}] ${chunk.toString()}`);
-		}).on('error', e => {
-			console.log('ERROR:' + e.stack);
-		});
-	})
-	.end(body);
+	return new Promise((resolve, reject) => {
+		https.request(options, res => {
+			res.on('data', chunk => {
+				const statusCode = res.statusCode;
+				const result = statusCode === 200 ? 'OK' : `NG(${statusCode})`;
+				console.log(`[${result}] ${chunk.toString()}`);
+			})
+			.on('error', reject)
+			.on('end', resolve);
+		})
+		.on('error', reject)
+		.end(body);
+	});
 }
