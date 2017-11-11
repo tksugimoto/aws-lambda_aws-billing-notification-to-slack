@@ -92,6 +92,7 @@ function getBillingData(billingCsvKey) {
 				return row[i];
 			}).join(', ');
 		}).join('\n');
+		console.log(text);
 
 		const lastModified = new Date(data.LastModified);
 		const lastModifiedText = `lastModified: ${lastModified.toLocaleString()}`;
