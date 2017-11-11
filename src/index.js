@@ -28,7 +28,7 @@ function getAccountId() {
 	console.log('============= getCallerIdentity =============');
 	return sts.getCallerIdentity().promise().then(data => {
 		const accountId = data.Account;
-		console.log(JSON.stringify(data, '', '    '));
+		console.log(`accountId: ${accountId}`);
 		return accountId;
 	});
 }
@@ -53,7 +53,7 @@ function getLatestBillingCsvKey(accountId) {
 		const latestBillingCsv = data.Contents.filter(content => {
 			return content.Key.includes('-aws-billing-csv-');
 		}).slice(-1)[0];
-		console.log(latestBillingCsv);
+		console.log(`latestBillingCsv: ${latestBillingCsv.Key}`);
 		return latestBillingCsv.Key;
 	});
 }
@@ -66,8 +66,8 @@ function getBillingData(billingCsvKey) {
 	};
 	return s3.getObject(params).promise().then(data => {
 		const csv = data.Body.toString();
-		delete data.Body;
-		console.log(JSON.stringify(data, '', '    '));
+		console.log(`ContentLength: ${data.ContentLength}`);
+		console.log(`LastModified: ${data.LastModified}`);
 		console.log('============= Body =============');
 		const matrix = csv.split('\n').filter(s => s.length).map(line => {
 			// 最初と最後の「'」を削除
