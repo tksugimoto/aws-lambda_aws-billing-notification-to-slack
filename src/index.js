@@ -100,7 +100,7 @@ function getBillingData(billingCsvKey) {
 		}).join('\n');
 
 		const lastModified = new Date(data.LastModified);
-		const lastModifiedText = `lastModified: ${lastModified.toLocaleString()}`;
+		const lastModifiedText = `lastModified: ${lastModified.toISOString()}`;
 		return lastModifiedText + '\n' + text;
 	});
 }
