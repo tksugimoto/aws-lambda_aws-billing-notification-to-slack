@@ -100,6 +100,8 @@ function getBillingData(billingCsvKey) {
 }
 
 function postToSlack(text) {
+	console.log('============= postToSlack =============');
+	console.log(`post body: ${text}`);
 	const options = parseUrl(slackWebhookUrl);
 	options.method = 'POST';
 
