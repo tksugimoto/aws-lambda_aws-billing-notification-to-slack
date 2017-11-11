@@ -26,9 +26,7 @@ exports.handler = (event, context, callback) => {
 
 function getAccountId() {
 	console.log('============= getCallerIdentity =============');
-	const startTime = Date.now();
 	return sts.getCallerIdentity().promise().then(data => {
-		console.log(Date.now() - startTime);
 		const accountId = data.Account;
 		console.log(JSON.stringify(data, '', '    '));
 		return accountId;
@@ -50,9 +48,7 @@ function getLatestBillingCsvKey(accountId) {
 		//   ※ 同じ年にすると1月になったばかりはレポートが作成されて無い場合がある（？）
 		params.StartAfter = `${accountId}-aws-billing-csv-${year - 1}-${month}`;
 	}
-	const startTime = Date.now();
 	return s3.listObjectsV2(params).promise().then(data => {
-		console.log(Date.now() - startTime);
 		console.log(`KeyCount: ${data.KeyCount}`);
 		const latestBillingCsv = data.Contents.filter(content => {
 			return content.Key.includes('-aws-billing-csv-');
@@ -68,9 +64,7 @@ function getBillingData(billingCsvKey) {
 		Bucket: bucket,
 		Key: billingCsvKey,
 	};
-	const startTime = Date.now();
 	return s3.getObject(params).promise().then(data => {
-		console.log(Date.now() - startTime);
 		const csv = data.Body.toString();
 		delete data.Body;
 		console.log(JSON.stringify(data, '', '    '));
