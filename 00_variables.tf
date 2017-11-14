@@ -8,10 +8,6 @@ variable "prefix" {}
 # リージョン
 variable "region" {}
 
-# スケジュール設定
-variable "schedule_name" {}
-variable "schedule_expression" {}
-
 
 # 請求レポートを保存しているバケット名
 variable "bucket" {}

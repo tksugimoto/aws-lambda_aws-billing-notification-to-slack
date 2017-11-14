@@ -16,6 +16,8 @@ const sts = new AWS.STS();
 const s3 = new AWS.S3();
 
 exports.handler = (event, context, callback) => {
+	if (isInvokedByS3(event) && !includesBillingCsvFile(event.Records)) return;
+
 	Promise.resolve()
 	.then(getAccountId)
 	.then(getLatestBillingCsvKey)
@@ -23,6 +25,20 @@ exports.handler = (event, context, callback) => {
 	.then(postToSlack)
 	.catch(callback);
 };
+
+function isInvokedByS3(event) {
+	if (!event.Records) return false;
+	if (!Array.isArray(event.Records)) return false;
+	return event.Records.some(record => {
+		return record.eventSource === 'aws:s3' && record.s3;
+	});
+}
+
+function includesBillingCsvFile(records) {
+	return records.some(record => {
+		return record.s3.object.key.includes('-aws-billing-csv-');
+	});
+}
 
 function getAccountId() {
 	console.log('============= getCallerIdentity =============');
