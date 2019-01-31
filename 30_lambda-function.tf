@@ -10,7 +10,7 @@ resource "aws_lambda_function" "notification" {
   runtime          = "nodejs6.10"
   handler          = "index.handler"
   timeout          = 10
-  filename         = "./dist/index.zip"
+  filename         = "${data.archive_file.source_code.output_path}"
   source_code_hash = "${data.archive_file.source_code.output_base64sha256}"
 
   environment {
