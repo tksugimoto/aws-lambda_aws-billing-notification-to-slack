@@ -7,7 +7,7 @@ data "archive_file" "source_code" {
 resource "aws_lambda_function" "notification" {
   function_name    = "${var.prefix}"
   role             = "${aws_iam_role.iam_for_lambda.arn}"
-  runtime          = "nodejs6.10"
+  runtime          = "nodejs8.10"
   handler          = "index.handler"
   timeout          = 10
   filename         = "${data.archive_file.source_code.output_path}"
