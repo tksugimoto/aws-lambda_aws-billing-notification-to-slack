@@ -14,7 +14,7 @@ AWS Lambda(Node.js)でAWSの利用金額をSlackに投げる（構成を [Terraf
 		1. 「検証」→「有効なバケット」となればOK
 1. lamnda関数を作成
 	1. 設定用ファイルを作成  
-		`terraform.tfvars.example` ファイルを `terraform.tfvars` という名前でコピー
+		[terraform.tfvars.example](./terraform.tfvars.example) ファイルを `terraform.tfvars` という名前でコピー
 		```
 		cp terraform.tfvars.example terraform.tfvars
 		```
