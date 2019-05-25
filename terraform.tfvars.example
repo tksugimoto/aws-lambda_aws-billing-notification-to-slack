@@ -1,4 +1,4 @@
-# Rename: terraform.tfvars.sample → terraform.tfvars
+# Rename: terraform.tfvars.example → terraform.tfvars
 
 # AWSのアクセスキー
 aws_access_key = "AKIA_____________________"
